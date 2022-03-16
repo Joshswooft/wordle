@@ -1,30 +1,38 @@
 <script lang="ts">
-	export let name: string;
+	const boardSizeX = 5;
+	const boardSizeY = 5;
+
 </script>
 
 <main>
-	<h1>Hello {name}!</h1>
-	<p>Visit the <a href="https://svelte.dev/tutorial">Svelte tutorial</a> to learn how to build Svelte apps.</p>
+	<div class="grid">
+		{#each Array(boardSizeY) as _, row (row)}
+			{#each Array(boardSizeX) as _, col (col)}
+				<div class="grid-item">{row}{col}</div>
+			{/each}
+		{/each}
+	</div>
 </main>
 
 <style>
-	main {
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(5, auto);
+		grid-template-rows: repeat(5, auto);
+		grid-gap: 20px;
+		align-items: center;
+		justify-content: center;
+	}
+	.grid-item {
+		border-radius: 5px;
+		border: 2px solid grey;
+		font-weight: bold;
+		font-size: 18px;
+		max-width: 100px;
+		max-height: 100px;
 		text-align: center;
-		padding: 1em;
-		max-width: 240px;
-		margin: 0 auto;
-	}
-
-	h1 {
-		color: #ff3e00;
-		text-transform: uppercase;
-		font-size: 4em;
-		font-weight: 100;
-	}
-
-	@media (min-width: 640px) {
-		main {
-			max-width: none;
-		}
+		justify-self: center;
+		padding: 20px;
 	}
 </style>
