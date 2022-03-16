@@ -1,28 +1,42 @@
 <script lang="ts">
 	
-	let previousGuesses = [];
 	let guess = "";
-	const mapping = {};
+	const colorMapping = {};
+	const boardList = [];
 	const fakeWord = "world";
 	const boardSizeX = fakeWord.length;
 
 	let currentGuessAttempt = 0;
 	const totalGuessAttempt = 6;
 
+	let hasWon = false;
+
+	for(let i = 0; i < boardSizeX * totalGuessAttempt; i++) {
+		boardList.push("")
+	}
+
+
 	function onSubmit(e) {
 		e.preventDefault();
 		console.log(guess);
-		
-		if (guess === fakeWord) {
-			alert("you are a winner")
-			// TODO: fire off some confetti
+
+		if (guess.length !== boardSizeX) {
 			return
 		}
-
-		previousGuesses.push(guess);
+		
+		if (guess === fakeWord) {
+			alert(`You correctly guessed the word in ${currentGuessAttempt + 1} tries!`)
+			// TODO: fire off some confetti
+			hasWon = true;
+		}
+		
+		guess.split("").forEach((letter, index) => {
+			console.log(index + (currentGuessAttempt * boardSizeX));
+			boardList[index + (currentGuessAttempt * boardSizeX)] = letter;
+		})
 		currentGuessAttempt++;
-		if (currentGuessAttempt === totalGuessAttempt) {
-			alert("you lost!")
+		if (currentGuessAttempt === totalGuessAttempt && !hasWon) {
+			alert("The word was " + fakeWord)
 			return
 		}
 		
@@ -36,14 +50,15 @@
 				const isCorrectPosition = fakeWord.charAt(i) === letter
 				
 				if (isCorrectPosition) {
-					mapping[letter] = "green"
+					colorMapping[letter + i] = "green"
 					return
 				}
-				mapping[letter] = "yellow"
+				colorMapping[letter + i] = "yellow"
+				return
 			}
-			mapping[letter] = "grey"
+			colorMapping[letter + i] = "grey"
 		});
-		
+		guess = "";
 	}
 
 </script>
@@ -51,17 +66,10 @@
 <main>
 	<form on:submit={onSubmit}>
 		<p>guesses remaining: {totalGuessAttempt - currentGuessAttempt}</p>
-		<input type="text" bind:value={guess} />
+		<input type="text" bind:value={guess} maxlength={boardSizeX} />
 		<div class="grid">
-			{#each Array(totalGuessAttempt) as _, row (row)}
-				{#each Array(boardSizeX) as _, col (col)}
-				<!-- TODO: fill the characters on the board -->
-					{#if row === currentGuessAttempt && col < guess.length && guess}
-						<div class="grid-item">{guess[col]}</div>
-					{:else}
-						<div class="grid-item"></div>
-					{/if}
-				{/each}
+			{#each boardList as item, index}
+				<div class={`grid-item ${colorMapping[item + (index % boardSizeX)]}`}>{item}</div>
 			{/each}
 		</div>
 	</form>
@@ -89,4 +97,19 @@
 		padding: 20px;
 		text-transform: uppercase;
 	}
+
+	.grey, .yellow, .green {
+		color: white;
+		border: none;
+	}
+	.grey {
+		background-color: gray;
+	}
+	.yellow {
+		background-color: #cfcf27;
+	}
+	.green {
+		background-color: green;
+	}
+
 </style>
