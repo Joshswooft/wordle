@@ -1,10 +1,35 @@
 <script lang="ts">
+	import { onMount } from "svelte";
+
+	let fakeWord = "world";
+
+	async function getWordOfTheDay() {
+		const response = await fetch("https://api.frontendeval.com/fake/word");
+		return await response.text();
+	}
+
+	async function checkWordIsValid(word: string) {
+		const response = await fetch("https://api.frontendeval.com/fake/word/valid", {
+			body: JSON.stringify({
+				word
+			}),
+			method: "POST",
+			headers: {
+        		'Content-Type': 'application/json'
+    		}
+		});
+
+		return await response.json();
+	}
+
+	onMount(async () => {
+		fakeWord = await getWordOfTheDay();
+	})
+
 	
 	let guess = "";
 	const colorMapping = {};
 	const boardList = [];
-	// TODO: replace fake word with API call
-	const fakeWord = "world";
 	const boardSizeX = fakeWord.length;
 
 	let currentGuessAttempt = 0;
@@ -21,9 +46,8 @@
 	}
 
 
-	function onSubmit(e) {
+	async function onSubmit(e) {
 		e.preventDefault();
-		console.log(guess);
 
 		guess = guess.toLocaleLowerCase();
 
@@ -31,7 +55,11 @@
 			return
 		}
 
-		// TODO: check word is valid and if not then dont contribute as guess attempt
+		const isValid: boolean = await checkWordIsValid(guess);
+		if (!isValid) {
+			alert("word is not in the dictionary, try again!")
+			return
+		}
 		
 		if (guess === fakeWord) {
 			alert(`You correctly guessed the word in ${currentGuessAttempt + 1} tries!`)
