@@ -3,6 +3,7 @@
 	let guess = "";
 	const colorMapping = {};
 	const boardList = [];
+	// TODO: replace fake word with API call
 	const fakeWord = "world";
 	const boardSizeX = fakeWord.length;
 
@@ -15,14 +16,22 @@
 		boardList.push("")
 	}
 
+	function onChange() {
+		guess = guess.toLocaleLowerCase();
+	}
+
 
 	function onSubmit(e) {
 		e.preventDefault();
 		console.log(guess);
 
+		guess = guess.toLocaleLowerCase();
+
 		if (guess.length !== boardSizeX) {
 			return
 		}
+
+		// TODO: check word is valid and if not then dont contribute as guess attempt
 		
 		if (guess === fakeWord) {
 			alert(`You correctly guessed the word in ${currentGuessAttempt + 1} tries!`)
@@ -66,7 +75,7 @@
 <main>
 	<form on:submit={onSubmit}>
 		<p>guesses remaining: {totalGuessAttempt - currentGuessAttempt}</p>
-		<input type="text" bind:value={guess} maxlength={boardSizeX} />
+		<input type="text" on:change={onChange} bind:value={guess} maxlength={boardSizeX} />
 		<div class="grid">
 			{#each boardList as item, index}
 				<div class={`grid-item ${colorMapping[item + (index % boardSizeX)]}`}>{item}</div>
