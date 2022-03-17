@@ -49,6 +49,11 @@
 	async function onSubmit(e) {
 		e.preventDefault();
 
+		// game is over
+		if(hasWon || totalGuessAttempt - currentGuessAttempt == 0) {
+			return
+		}
+
 		guess = guess.toLocaleLowerCase();
 
 		if (guess.length !== boardSizeX) {
@@ -61,21 +66,10 @@
 			return
 		}
 		
-		if (guess === fakeWord) {
-			alert(`You correctly guessed the word in ${currentGuessAttempt + 1} tries!`)
-			// TODO: fire off some confetti
-			hasWon = true;
-		}
 		
 		guess.split("").forEach((letter, index) => {
-			console.log(index + (currentGuessAttempt * boardSizeX));
 			boardList[index + (currentGuessAttempt * boardSizeX)] = letter;
 		})
-		currentGuessAttempt++;
-		if (currentGuessAttempt === totalGuessAttempt && !hasWon) {
-			alert("The word was " + fakeWord)
-			return
-		}
 		
 		const letters = guess.split("")
 		
@@ -96,6 +90,19 @@
 			colorMapping[letter + i] = "grey"
 		});
 		guess = "";
+
+		currentGuessAttempt++;
+		if (currentGuessAttempt === totalGuessAttempt && !hasWon) {
+			alert("The word was " + fakeWord)
+			return
+		}
+
+		if (guess === fakeWord) {
+			alert(`You correctly guessed the word in ${currentGuessAttempt + 1} tries!`)
+			// TODO: fire off some confetti
+			hasWon = true;
+		}
+
 	}
 
 </script>
