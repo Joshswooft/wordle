@@ -24,18 +24,23 @@
 
 	onMount(async () => {
 		fakeWord = await getWordOfTheDay();
+		
 	})
 
+	function init(el){
+    	el.focus()
+  	}
 	
 	let guess = "";
 	const colorMapping = {};
 	const boardList = [];
 	const boardSizeX = fakeWord.length;
-
+	const qwertyRows = "qwertyuiop|asdfghjkl|zxcvbnm".split("|")
 	let currentGuessAttempt = 0;
 	const totalGuessAttempt = 6;
 
 	let hasWon = false;
+	
 
 	for(let i = 0; i < boardSizeX * totalGuessAttempt; i++) {
 		boardList.push("")
@@ -85,12 +90,16 @@
 				
 				if (isCorrectPosition) {
 					colorMapping[letter + i] = "green"
+					// seperate entry for keyboard - probably not best way to do this
+					colorMapping[letter] = "green"
 					return
 				}
 				colorMapping[letter + i] = "yellow"
+				colorMapping[letter] = "yellow"
 				return
 			}
 			colorMapping[letter + i] = "grey"
+			colorMapping[letter] = "grey"
 		});
 		
 		
@@ -113,7 +122,7 @@
 <main>
 	<form on:submit={onSubmit}>
 		<p>guesses remaining: {totalGuessAttempt - currentGuessAttempt}</p>
-		<input type="text" on:change={onChange} bind:value={guess} maxlength={boardSizeX} />
+		<input use:init class="hidden" type="text" on:change={onChange} bind:value={guess} maxlength={boardSizeX} />
 		<div class="grid">
 			{#each boardList as item, index}
 				{#if parseInt(`${index / boardSizeX}`) == currentGuessAttempt && guess[index % boardSizeX]}
@@ -123,11 +132,25 @@
 				{/if}
 			{/each}
 		</div>
+		<div class="keyboard">
+			{#each qwertyRows as qwertyKeys}
+				<div class="keyboard-row">
+					{#each qwertyKeys.split("") as key}
+						<div class={`keyboard-key ${colorMapping[key]}`}>{key}</div>
+					{/each}
+				</div>
+			{/each}
+		</div>
 	</form>
 </main>
 
 <style>
 
+	.hidden {
+		opacity: 0;
+		width: 0;
+		overflow: hidden;
+	}
 	.grid {
 		display: grid;
 		grid-template-columns: repeat(5, auto);
@@ -161,13 +184,33 @@
 		border: none;
 	}
 	.grey {
-		background-color: gray;
+		background-color: rgba(112, 128, 144, 0.644);
 	}
 	.yellow {
 		background-color: #cfcf27;
 	}
 	.green {
 		background-color: green;
+	}
+
+	.keyboard {
+		display: grid;
+		margin: 20px;
+	}
+	.keyboard-row {
+		display: inline-flex;
+		justify-content: center;
+	}
+	.keyboard-key {
+		width: 50px;
+		height: 40px;
+		border-radius: 5px;
+		border: 1px solid #dee1e9;
+		display: flex;
+		text-align: center;
+		text-transform: uppercase;
+		justify-content: center;
+		align-items: center;
 	}
 
 </style>
