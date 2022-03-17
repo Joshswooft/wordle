@@ -30,38 +30,40 @@
 	function init(el){
     	el.focus()
   	}
+
+	function onFocus(el) {
+		el.target.focus()
+	}
 	
 	let guess = "";
-	const colorMapping = {};
-	const boardList = [];
+	const colorMapping = {};let boardList = [];
 	const boardSizeX = fakeWord.length;
 	const qwertyRows = "qwertyuiop|asdfghjkl|zxcvbnm".split("|")
 	let currentGuessAttempt = 0;
 	const totalGuessAttempt = 6;
 
 	let hasWon = false;
-	
 
 	for(let i = 0; i < boardSizeX * totalGuessAttempt; i++) {
 		boardList.push("")
 	}
 
-	function onChange() {
+	function onChange(e) {
 		guess = guess.toLocaleLowerCase();
+		if (guess.length > 5) {
+			guess = guess.slice(0,5)
+		}
 		guess.split("").forEach((letter, index) => {
 			boardList[index + (currentGuessAttempt * boardSizeX)] = letter;
 		})
+
 	}
 
-
-	async function onSubmit(e) {
-		e.preventDefault();
-
+	async function handleSubmit() {
 		// game is over
 		if(hasWon || totalGuessAttempt - currentGuessAttempt == 0) {
 			return
 		}
-
 		guess = guess.toLocaleLowerCase();
 
 		if (guess.length !== boardSizeX) {
@@ -71,6 +73,10 @@
 		const isValid: boolean = await checkWordIsValid(guess);
 		if (!isValid) {
 			alert("word is not in the dictionary, try again!")
+			guess.split("").forEach((letter, index) => {
+				boardList[index + (currentGuessAttempt * boardSizeX)] = "";
+			})
+			guess = ""
 			return
 		}
 		
@@ -117,12 +123,19 @@
 		guess = "";
 	}
 
-</script>
+	async function onSubmit(e) {
+		e.preventDefault();
+		handleSubmit();
+	}
 
+</script>
 <main>
 	<form on:submit={onSubmit}>
+		{#if guess.length == boardSizeX && handleSubmit()}
+		{/if}
 		<p>guesses remaining: {totalGuessAttempt - currentGuessAttempt}</p>
-		<input use:init class="hidden" type="text" on:change={onChange} bind:value={guess} maxlength={boardSizeX} />
+		<!-- on:blur forces the focus back onto this input element if you click anywhere else on the page -->
+		<input use:init on:blur={onFocus} class="hidden" type="text" on:change={onChange} bind:value={guess} maxlength={boardSizeX} />
 		<div class="grid">
 			{#each boardList as item, index}
 				{#if parseInt(`${index / boardSizeX}`) == currentGuessAttempt && guess[index % boardSizeX]}
