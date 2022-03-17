@@ -43,6 +43,9 @@
 
 	function onChange() {
 		guess = guess.toLocaleLowerCase();
+		guess.split("").forEach((letter, index) => {
+			boardList[index + (currentGuessAttempt * boardSizeX)] = letter;
+		})
 	}
 
 
@@ -89,20 +92,20 @@
 			}
 			colorMapping[letter + i] = "grey"
 		});
-		guess = "";
-
-		currentGuessAttempt++;
-		if (currentGuessAttempt === totalGuessAttempt && !hasWon) {
-			alert("The word was " + fakeWord)
-			return
-		}
-
+		
+		
 		if (guess === fakeWord) {
 			alert(`You correctly guessed the word in ${currentGuessAttempt + 1} tries!`)
 			// TODO: fire off some confetti
 			hasWon = true;
 		}
-
+		
+		currentGuessAttempt++;
+		if (currentGuessAttempt === totalGuessAttempt && !hasWon) {
+			alert("The word was " + fakeWord)
+			return
+		}
+		guess = "";
 	}
 
 </script>
@@ -113,7 +116,11 @@
 		<input type="text" on:change={onChange} bind:value={guess} maxlength={boardSizeX} />
 		<div class="grid">
 			{#each boardList as item, index}
-				<div class={`grid-item ${colorMapping[item + (index % boardSizeX)]}`}>{item}</div>
+				{#if parseInt(`${index / boardSizeX}`) == currentGuessAttempt && guess[index % boardSizeX]}
+					<div class={`grid-item active`}>{guess[index % boardSizeX]}</div>
+				{:else}
+					<div class={`grid-item ${colorMapping[item + (index % boardSizeX)]}`}>{item}</div>
+				{/if}
 			{/each}
 		</div>
 	</form>
@@ -125,21 +132,28 @@
 		display: grid;
 		grid-template-columns: repeat(5, auto);
 		grid-template-rows: repeat(5, auto);
-		grid-gap: 20px;
+		grid-gap: 8px;
 		align-items: center;
 		justify-content: center;
 	}
 	.grid-item {
+		display: inline-grid;
 		border-radius: 5px;
-		border: 2px solid grey;
+		border: 2px solid #dee1e9;
 		font-weight: bold;
-		font-size: 18px;
-		max-width: 100px;
-		max-height: 100px;
+		font-size: 24px;
+		height: 64px;
+		width: 64px;
 		text-align: center;
 		justify-self: center;
-		padding: 20px;
+		padding: 10px;
 		text-transform: uppercase;
+		box-sizing: border-box;
+		align-items: center;
+	}
+
+	.grid-item.active {
+		border: 2px solid grey;
 	}
 
 	.grey, .yellow, .green {
