@@ -52,9 +52,9 @@ Example response: true
 
 Remove the text input and replicate the input of the original Wordle game. When the user loads the page they should be able to begin typing immediately without needing to focus on an input
 
-Keep track of the letters used as in the original Wordle game. How you display this this is up to you
+Keep track of the letters used as in the original Wordle game. How you display this is up to you.
 
-Save the state of the game so that the user can continue where they left off if they reload the page. Make sure the game resets when the word resets the next day
+Save the state of the game so that the user can continue where they left off if they reload the page. Make sure the game resets when the word resets the next day.
 
 ## Get started
 
