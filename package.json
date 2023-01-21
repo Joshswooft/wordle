@@ -28,6 +28,7 @@
     "@types/canvas-confetti": "^1.4.2",
     "canvas-confetti": "^1.5.1",
     "sirv-cli": "^2.0.0",
+    "svelte-confetti": "^1.2.2",
     "svelte-spa-router": "^3.2.0"
   }
 }

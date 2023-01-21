@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from "svelte";
-    import { push } from 'svelte-spa-router'
+  import { push } from 'svelte-spa-router'
+  import { Confetti } from "svelte-confetti"
 
 	let fakeWord = "world";
 
@@ -37,7 +38,8 @@
 	}
 	
 	let guess = "";
-	const colorMapping = {};let boardList = [];
+	const colorMapping = {};
+  let boardList = [];
 	const boardSizeX = fakeWord.length;
 	const qwertyRows = "qwertyuiop|asdfghjkl|zxcvbnm".split("|")
 	let currentGuessAttempt = 0;
@@ -111,8 +113,6 @@
 		
 		
 		if (guess === fakeWord) {
-			alert(`You correctly guessed the word in ${currentGuessAttempt + 1} tries!`)
-			// TODO: fire off some confetti
 			hasWon = true;
 		}
 		
@@ -131,6 +131,22 @@
 
 </script>
 <main>
+  {#if hasWon}
+    <div style="
+      position: fixed;
+      top: -50px;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      overflow: hidden;
+      pointer-events: none;"
+    >
+      <Confetti x={[-5, 5]} y={[0, 0.1]} delay={[500, 2000]} infinite duration=5000 amount=200 fallDistance="100vh" />
+    </div>
+
+  {/if}
 	<form on:submit={onSubmit}>
 		{#if guess.length == boardSizeX && handleSubmit()}
 		{/if}
