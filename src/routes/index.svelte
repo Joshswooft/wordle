@@ -51,6 +51,12 @@
 		boardList.push("")
 	}
 
+  // adds the clicked letter to the current guess
+  function onKeyboardClick(e) {
+    guess += e.target.innerText;
+    
+  }
+
 	function onChange(e) {
 		guess = guess.toLocaleLowerCase();
 		if (guess.length > 5) {
@@ -129,6 +135,10 @@
 		handleSubmit();
 	}
 
+  $: if(!hasWon && guess.length === boardSizeX) {
+    handleSubmit();
+  }
+
 </script>
 <main>
   {#if hasWon}
@@ -143,13 +153,11 @@
       overflow: hidden;
       pointer-events: none;"
     >
-      <Confetti x={[-5, 5]} y={[0, 0.1]} delay={[500, 2000]} infinite duration=5000 amount=200 fallDistance="100vh" />
+    <Confetti x={[-5, 5]} y={[0, 0.1]} delay={[500, 2000]} infinite duration=5000 amount=200 fallDistance="100vh" />
     </div>
 
   {/if}
 	<form on:submit={onSubmit}>
-		{#if guess.length == boardSizeX && handleSubmit()}
-		{/if}
 		<p>guesses remaining: {totalGuessAttempt - currentGuessAttempt}</p>
 		<!-- on:blur forces the focus back onto this input element if you click anywhere else on the page -->
 		<input use:init on:blur={onFocus} class="hidden" type="text" on:change={onChange} bind:value={guess} maxlength={boardSizeX} />
@@ -166,7 +174,7 @@
 			{#each qwertyRows as qwertyKeys}
 				<div class="keyboard-row">
 					{#each qwertyKeys.split("") as key}
-						<div class={`keyboard-key ${colorMapping[key]}`}>{key}</div>
+						<button type="button" on:click={onKeyboardClick} class={`keyboard-key ${colorMapping[key]}`}>{key}</button>
 					{/each}
 				</div>
 			{/each}
