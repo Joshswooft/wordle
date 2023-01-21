@@ -169,11 +169,12 @@
     <input
       use:init
       on:blur={onFocus}
-      class="hidden"
+      class="hidden mobile-show"
       type="text"
       on:change={onChange}
       bind:value={guess}
       maxlength={boardSizeX}
+      placeholder="Type your word..."
     />
     <div class="grid">
       {#each boardList as item, index}
@@ -278,5 +279,26 @@
     text-transform: uppercase;
     justify-content: center;
     align-items: center;
+  }
+
+  @media screen and (max-width: 600px) {
+    .keyboard {
+      display: none;
+    }
+
+    .grid-item {
+      height: 40px;
+      width: 40px;
+      padding: 5px;
+    }
+
+    .mobile-show {
+      display: block;
+      opacity: 1;
+    }
+    input.mobile-show {
+      width: 100%;
+      margin-bottom: 2em;
+    }
   }
 </style>
